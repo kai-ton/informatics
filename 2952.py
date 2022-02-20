@@ -1,0 +1,7 @@
+x1 = int(input())
+v1 = int(input())
+c1 = int(input())
+x2 = int(input())
+v2 = int(input())
+c2 = int(input())
+print((x2 * 3600 + v2 * 60 + c2) - (x1 * 3600 + v1 * 60 + c1))
