@@ -1,0 +1,71 @@
+#include <iostream>
+#include <vector>
+#include <set>
+
+std::vector<std::vector<std::pair<long long, long long>>> Matrix_to_DisList (std::vector<std::vector<long long>> Matrix) {
+    // создаем список смежности с расстояниями на основе матрицы смежности
+    std::vector<std::vector<std::pair<long long, long long>>> DisList(Matrix.size());
+    for (int i = 0; i < Matrix.size(); i++) {
+        for (int j = 0; j < Matrix[i].size(); j++) {
+            if (Matrix[i][j] != 0 && Matrix[i][j] != -1) {  // 0 или -1 по условию задачи - отсутствие ребра
+                DisList[i].push_back({j, Matrix[i][j]});
+            }
+        }
+    }
+    return DisList;
+}
+
+void Dijkstra (std::vector<std::vector<std::pair<long long, long long>>> DistList,
+                int Start, int Finish, std::vector<long long>& dist) {
+    // алгоритм Дейкстры
+    std::set<std::pair<long long, long long>> DistSet;  // множество для сортировки по расстояниям
+    long long Vershina;
+    dist[Start] = 0;
+    DistSet.insert({dist[Start], Start});  // first - текущее расстояние до вершины, second - номер вершины
+    while (!DistSet.empty()) {
+        Vershina = DistSet.begin()->second;
+        DistSet.erase(DistSet.begin());
+        for (int i = 0; i < DistList[Vershina].size(); i++) {
+            // проверяем уменьшается ли расстояние до соседней вершины
+            if (dist[DistList[Vershina][i].first] > dist[Vershina] + DistList[Vershina][i].second) {
+                // убираем из множества старую пару и погружаем новую
+                DistSet.erase({dist[DistList[Vershina][i].first], DistList[Vershina][i].first});
+                dist[DistList[Vershina][i].first] = dist[Vershina] + DistList[Vershina][i].second;
+                DistSet.insert({dist[DistList[Vershina][i].first], DistList[Vershina][i].first});
+            }
+            /*
+            std::cout << Vershina << ' ' << DistList[Vershina][i].first << ": \n";
+            for (auto d : dist) {
+                std::cout << d << " ";
+            }
+            std::cout << '\n' << "------------------" << '\n';
+            */
+        }
+    }
+}
+
+int main() {
+    int n, Start, Finish, Shag;
+    std::cin >> n >> Start >> Finish;  // количество вершин, начало и конец пути
+    long long infinite = 1e17;
+    std::vector<long long> dist(n, infinite); // массив расстояний от стартовой вершины до других вершин
+    std::vector<std::vector<long long>> Matrix(n, std::vector<long long>(n));  // исходная матрица смежности
+    std::vector<std::vector<std::pair<long long, long long>>> DisList;  // список смежности с расстояниями
+
+    // ввод матрицы смежности
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            std::cin >> Matrix[i][j];
+        }
+    }
+
+    Start -= 1;
+    Finish -= 1;
+    DisList = Matrix_to_DisList(Matrix);  // создаем список смежности
+    Dijkstra(DisList, Start, Finish, dist);
+    if (dist[Finish] != 1e17) {
+        std::cout << dist[Finish];
+    } else {
+        std::cout << -1;
+    }
+}
