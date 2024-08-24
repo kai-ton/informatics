@@ -1,0 +1,47 @@
+#include <iostream>
+#include <queue>
+
+int main() {
+    int n, m;
+    std::queue<int> First, Second;
+    for (int i = 0; i < 5; i++) {
+        std::cin >> n;
+        First.push(n);
+    }
+    for (int i = 0; i < 5; i++) {
+        std::cin >> n;
+        Second.push(n);
+    }
+    for (int i = 1; i < 1000001; i++) {
+        n = First.front();
+        m = Second.front();
+        if ((n > m && !(m == 0 && n == 9)) || (n == 0 && m == 9)) {
+            First.pop();
+            Second.pop();
+            First.push(n);
+            First.push(m);
+        } else {
+            if (m > n && !(n == 0 && m == 9) || (m == 0 && n == 9)) {
+                First.pop();
+                Second.pop();
+                Second.push(n);
+                Second.push(m);
+            } else {
+                break;
+            }
+        }
+        if (First.empty()) {
+            std::cout << "second " << i;
+            n = -1;
+            break;
+        }
+        if (Second.empty()) {
+            std::cout << "first " << i;
+            n = -1;
+            break;
+        }
+    }
+    if (n != -1) {
+        std::cout << "botva";
+    }
+}
